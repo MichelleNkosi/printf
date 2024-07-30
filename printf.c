@@ -1,58 +1,76 @@
-#include "main.h"
+#include <stdarg.h>
+#include <unistd.h>
 
-/**
- * printf - gives output according to a format.
- * @format: A character string with format specifiers.
- * Return: The number of characters printed null.
- */
+/* Function prototypes */
+int _printf(const char *format, ...);
+int _strlen(const char *s);
+
+int main(void)
+{
+    _printf("Character: %c\n", 'M');
+    _printf("String: %s\n", "Hello, Universe!");
+    _printf("Percent sign: %%\n");
+    _printf("Multiple: %c %s %%\n", 'X', "example");
+
+    return (0);
+}
+
+/* Function implementations */
 int _printf(const char *format, ...)
 {
-va_list args;
-int count = 0;
-const char *p;
-char *str;
-char ch;
+    va_list args;
+    int i = 0, count = 0;
+    char *str;
+    char ch;
 
-if (format == NULL)
-return (-1);
+    if (format == NULL)
+        return (-1);
 
-va_start(args, format);
-for (p = format; *p != '\0'; p++)
-{
-if (*p == '%')
-{
-p++;
-if (*p == '\0')
-break;
-if (*p == 'c')
-{
-ch = (char)va_arg(args, int);
-count += write(1, &ch, 1);
-}
-else if (*p == 's')
-{
-str = va_arg(args, char *);
-if (str == NULL)
-str = "(null)";
-while (*str)
-count += write(1, str++, 1);
-}
-else if (*p == '%')
-{
-count += write(1, "%", 1);
-}
-else
-{
-count += write(1, "%", 1);
-count += write(1, p, 1);
-}
-}
-else
-{
-count += write(1, p, 1);
-}
-}
-va_end(args);
-return (count);
+    va_start(args, format);
+
+    while (format[i])
+    {
+        if (format[i] == '%')
+        {
+            i++;
+            switch (format[i])
+            {
+                case 'c':
+                    ch = va_arg(args, int);
+                    count += write(1, &ch, 1);
+                    break;
+                case 's':
+                    str = va_arg(args, char *);
+                    if (str == NULL)
+                        str = "(null)";
+                    count += write(1, str, _strlen(str));
+                    break;
+                case '%':
+                    count += write(1, "%", 1);
+                    break;
+                default:
+                    count += write(1, &format[i - 1], 1);
+                    count += write(1, &format[i], 1);
+                    break;
+            }
+        }
+        else
+        {
+            count += write(1, &format[i], 1);
+        }
+        i++;
+    }
+
+    va_end(args);
+    return (count);
 }
 
+int _strlen(const char *s)
+{
+    int len = 0;
+
+    while (s[len] != '\0')
+        len++;
+    
+    return (len);
+}
