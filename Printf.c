@@ -1,23 +1,17 @@
 #include "main.h"
-
 /**
  * _printf - Produces output according to a format.
  * @format: A character string containing zero or more directives.
- *
- * Return: The number of characters printed (excluding the null byte
- *         used to end output to strings).
+ * Return: The number of characters printed (excluding the null byte).
  */
 int _printf(const char *format, ...)
 {
 int count = 0;
 int i = 0;
 va_list args;
-
 va_start(args, format);
-
 if (!format)
 return (-1);
-
 while (format && format[i])
 {
 if (format[i] == '%' && format[i + 1] != '\0')
@@ -52,7 +46,6 @@ count += putchar(format[i]);
 }
 i++;
 }
-
 va_end(args);
 return (count);
 }
