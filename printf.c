@@ -55,3 +55,4 @@ count += write(1, p, 1);
 va_end(args);
 return (count);
 }
+
