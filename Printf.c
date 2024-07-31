@@ -1,49 +1,64 @@
 #include "main.h"
-/** _printf - Produces output according to a format.
-* @format: A character string containing zero or more directives.
-* Return: The number of characters printed (excluding the null byte).
-**/
+
+/**
+ * _printf - Produces output according to a format
+ * @format: A character string composed of zero or more directives
+ *
+ * Return: The number of characters printed (excluding the null byte)
+ */
 int _printf(const char *format, ...)
 {
 int count = 0;
-int i = 0;
+const char *p;
 va_list args;
 va_start(args, format);
 if (!format)
+{
 return (-1);
-while (format && format[i])
+}
+for (p = format; *p != '\0'; p++)
 {
-if (format[i] == '%' && format[i + 1] != '\0')
+if (*p == '%')
 {
-i++;
-switch (format[i])
+p++;
+switch (*p)
 {
 case 'c':
-count += putchar(va_arg(args, int));
+{
+char c = (char) va_arg(args, int);
+write(1, &c, 1);
+count++;
 break;
+}
 case 's':
 {
-char *str = va_arg(args, char *);
-if (!str)
-str = "(null)";
-while (*str)
-count += putchar(*str++);
+char *s = va_arg(args, char *);
+if (!s)
+s = "(null)";
+while (*s)
+{
+write(1, s, 1);
+s++;
+count++;
+}
 break;
 }
 case '%':
-count += putchar('%');
+write(1, "%", 1);
+count++;
 break;
 default:
-count += putchar('%');
-count += putchar(format[i]);
+write(1, "%", 1);
+write(1, p, 1);
+count += 2;
 break;
 }
 }
 else
 {
-count += putchar(format[i]);
+write(1, p, 1);
+count++;
 }
-i++;
 }
 va_end(args);
 return (count);
